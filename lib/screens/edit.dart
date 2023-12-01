@@ -6,6 +6,7 @@ import 'package:h1/function/model.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditStudent extends StatefulWidget {
+  // ignore: prefer_typing_uninitialized_variables
   final student;
 
   const EditStudent({super.key, required this.student});

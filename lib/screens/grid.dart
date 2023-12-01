@@ -28,7 +28,7 @@ class Gridlist extends StatelessWidget {
 
           
         itemCount:value.length ,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2), itemBuilder: (context, index){
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2), itemBuilder: (context, index){
 
            final SD= value[index];
 
@@ -45,7 +45,7 @@ class Gridlist extends StatelessWidget {
             child: Card(
 
               
-              color: Color.fromARGB(255, 193, 228, 244),
+              color: const Color.fromARGB(255, 193, 228, 244),
               
               
               
