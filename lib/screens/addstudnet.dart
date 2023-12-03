@@ -1,11 +1,9 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:h1/function/functions.dart';
 import 'package:h1/function/model.dart';
 import 'package:image_picker/image_picker.dart';
-
 
 class AddStudent extends StatefulWidget {
   const AddStudent({super.key});
@@ -51,11 +49,11 @@ class _AddStudentState extends State<AddStudent> {
               children: [
                 Stack(
                   children: [
-                    CircleAvatar(backgroundImage: image25 != null  ? FileImage(image25!) : const AssetImage('images/sd1.png')  as ImageProvider,
-                        
-                           
-                            
-                               
+                    CircleAvatar(
+                        backgroundImage: image25 != null
+                            ? FileImage(image25!)
+                            : const AssetImage('images/sd1.png')
+                                as ImageProvider,
                         radius: 99),
                     Positioned(
                       bottom: 20,
@@ -84,7 +82,6 @@ class _AddStudentState extends State<AddStudent> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -105,7 +102,6 @@ class _AddStudentState extends State<AddStudent> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -126,7 +122,6 @@ class _AddStudentState extends State<AddStudent> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                   
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -147,7 +142,6 @@ class _AddStudentState extends State<AddStudent> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {

@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -37,7 +36,10 @@ class StudentList extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.edit,color: Colors.green,),
+                      icon: const Icon(
+                        Icons.edit,
+                        color: Colors.green,
+                      ),
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => EditStudent(student: student),
@@ -45,7 +47,10 @@ class StudentList extends StatelessWidget {
                       },
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete,color: Colors.red,),
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
                       onPressed: () {
                         deletestudent(context, student);
                       },

@@ -5,7 +5,6 @@ import 'package:h1/screens/grid.dart';
 import 'package:h1/screens/search.dart';
 import 'package:h1/screens/studnetlist.dart';
 
-
 class HomeScreeen extends StatefulWidget {
   const HomeScreeen({super.key});
 
@@ -14,19 +13,13 @@ class HomeScreeen extends StatefulWidget {
 }
 
 class _HomeScreeenState extends State<HomeScreeen> {
+  int _currentinex = 0;
 
-  int _currentinex=0;
-
-  final  Screens=[
-
-     Gridlist(),
+  final Screens = [
+    Gridlist(),
     StudentList(),
-
-
-   
-
   ];
- 
+
   @override
   Widget build(BuildContext context) {
     getstudentdata();
@@ -39,59 +32,43 @@ class _HomeScreeenState extends State<HomeScreeen> {
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (ctxs) => const SearchScreen()));
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (ctxs) => const SearchScreen()));
               },
-              icon: const Icon(Icons.search_rounded,color: Colors.black,))
+              icon: const Icon(
+                Icons.search_rounded,
+                color: Colors.black,
+              ))
         ],
       ),
-      body:  Screens[_currentinex]  ,
-
-
-     floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      body: Screens[_currentinex],
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Visibility(
-        
         visible: true, // Show the add button
         child: FloatingActionButton(
           backgroundColor: Colors.lightBlue,
-          shape:const CircleBorder(),
+          shape: const CircleBorder(),
           onPressed: () {
             addstudent(context);
           },
-          child:const Icon(Icons.add,),
+          child: const Icon(
+            Icons.add,
+          ),
         ),
       ),
-
-
-
-
       bottomNavigationBar: BottomNavigationBar(
-        
-        currentIndex: _currentinex,
-        unselectedItemColor: Colors.black,
-
-        onTap: (newvalue){
-
-          print(newvalue);
-          setState(() {
-            _currentinex=newvalue;
-
-
-            
-
-
-          });
-        },
-        items: [
-
-
-        
-         BottomNavigationBarItem(icon:Icon(Icons.grid_3x3), label: 'Grid'),
-          BottomNavigationBarItem(icon: Icon(Icons.home),label: 'home'),
-         
-
-      ]),
-      
+          currentIndex: _currentinex,
+          unselectedItemColor: Colors.black,
+          onTap: (newvalue) {
+            print(newvalue);
+            setState(() {
+              _currentinex = newvalue;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.grid_3x3), label: 'Grid'),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
+          ]),
     );
   }
 

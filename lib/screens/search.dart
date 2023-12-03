@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:h1/function/functions.dart';
 import 'package:h1/function/model.dart';
 import 'package:h1/screens/edit.dart';
 import 'package:h1/screens/studentdetails.dart';
-
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -60,11 +58,14 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: TextField( 
+                    child: TextField(
                       onChanged: (value) => _runFilter(value),
                       decoration: const InputDecoration(
                         labelText: 'Search',
-                        suffixIcon: Icon(Icons.search,color: Colors.blue,),
+                        suffixIcon: Icon(
+                          Icons.search,
+                          color: Colors.blue,
+                        ),
                       ),
                     ),
                   ),
@@ -74,7 +75,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       itemBuilder: (context, index) {
                         final finduserItem = finduser[index];
                         return Card(
-                          color:const Color.fromARGB(255, 160, 207, 246),
+                          color: const Color.fromARGB(255, 160, 207, 246),
                           margin: const EdgeInsets.symmetric(vertical: 10),
                           child: ListTile(
                             leading: CircleAvatar(
@@ -83,25 +84,33 @@ class _SearchScreenState extends State<SearchScreen> {
                             ),
                             title: Text(finduserItem.name),
                             subtitle: Text('CLASS : ${finduserItem.classname}'),
-                            trailing:  Row(
-                         mainAxisSize: MainAxisSize.min,
-                          children: [
-                           IconButton(
-                            icon: const Icon(Icons.edit,color: Colors.green,),
-                            onPressed: () {
-                             Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => EditStudent(student: finduserItem),
-                        ));
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete,color: Colors.red,),
-                      onPressed: () {
-                        deletestudent(context, finduserItem);
-                      },
-                    ),
-                  ],
-                ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.green,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          EditStudent(student: finduserItem),
+                                    ));
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    deletestudent(context, finduserItem);
+                                  },
+                                ),
+                              ],
+                            ),
                             onTap: () {
                               Navigator.of(context)
                                   .pushReplacement(MaterialPageRoute(
@@ -122,6 +131,7 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
     );
   }
+
   void deletestudent(ctx, StudentModel student) {
     showDialog(
       context: ctx,

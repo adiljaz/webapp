@@ -70,8 +70,8 @@ class _EditStudentState extends State<EditStudent> {
                   // Name input field with validation
                   Row(
                     children: [
-                      
-                     const SizedBox( width: 10), // Add spacing between icon and text field
+                      const SizedBox(
+                          width: 10), // Add spacing between icon and text field
                       Expanded(
                         child: TextFormField(
                           keyboardType: TextInputType.name,
@@ -97,8 +97,8 @@ class _EditStudentState extends State<EditStudent> {
                   // Class input field with validation
                   Row(
                     children: [
-                      
-                     const SizedBox( width: 10), // Add spacing between icon and text field
+                      const SizedBox(
+                          width: 10), // Add spacing between icon and text field
                       Expanded(
                         child: TextFormField(
                           keyboardType: TextInputType.text,
@@ -124,8 +124,8 @@ class _EditStudentState extends State<EditStudent> {
                   // Guardian input field with validation
                   Row(
                     children: [
-                      
-                    const  SizedBox( width: 10), // Add spacing between icon and text field
+                      const SizedBox(
+                          width: 10), // Add spacing between icon and text field
                       Expanded(
                         child: TextFormField(
                           keyboardType: TextInputType.name,
@@ -151,8 +151,8 @@ class _EditStudentState extends State<EditStudent> {
                   // Mobile input field with validation
                   Row(
                     children: [
-                    
-                     const SizedBox( width: 10), // Add spacing between icon and text field
+                      const SizedBox(
+                          width: 10), // Add spacing between icon and text field
                       Expanded(
                         child: TextFormField(
                           keyboardType: TextInputType.number,
@@ -251,7 +251,7 @@ class _EditStudentState extends State<EditStudent> {
               children: [
                 Row(
                   children: [
-                   const Text('Choose from camera'),
+                    const Text('Choose from camera'),
                     IconButton(
                       onPressed: () {
                         geterimage(ImageSource.camera);
@@ -265,7 +265,7 @@ class _EditStudentState extends State<EditStudent> {
                 ),
                 Row(
                   children: [
-                   const Text('Choose from gallery '),
+                    const Text('Choose from gallery '),
                     IconButton(
                       onPressed: () {
                         geterimage(ImageSource.gallery);
@@ -285,4 +285,3 @@ class _EditStudentState extends State<EditStudent> {
     );
   }
 }
- 
