@@ -16,8 +16,8 @@ class _HomeScreeenState extends State<HomeScreeen> {
   int _currentinex = 0;
 
   final Screens = [
-    Gridlist(),
-    StudentList(),
+    const Gridlist(),
+    const StudentList(),
   ];
 
   @override
@@ -65,7 +65,7 @@ class _HomeScreeenState extends State<HomeScreeen> {
               _currentinex = newvalue;
             });
           },
-          items: [
+          items: const [
             BottomNavigationBarItem(icon: Icon(Icons.grid_3x3), label: 'Grid'),
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
           ]),
