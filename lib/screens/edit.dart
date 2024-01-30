@@ -3,10 +3,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-
-firebase_storage.FirebaseStorage storage =
-  firebase_storage.FirebaseStorage.instance;
 
 class EditStudent extends StatefulWidget {
   final String name;
@@ -32,10 +28,6 @@ class EditStudent extends StatefulWidget {
 
 class _EditStudentState extends State<EditStudent> {
   late String updatedImagepath;
-
-  firebase_storage.FirebaseStorage storage =
-  firebase_storage.FirebaseStorage.instance;
-
 
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
@@ -217,7 +209,7 @@ class _EditStudentState extends State<EditStudent> {
 
       final data = {
         'name': name,
-        'class ': classA,
+        'class': classA,
         'guardian': father,
         'number': number,
         'image': updatedImagepath,

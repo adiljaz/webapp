@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:h1/screens/studentdetails.dart';
 
 
 class Gridlist extends StatelessWidget {
@@ -24,21 +25,26 @@ class Gridlist extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final DocumentSnapshot donorsnap =
                           snapshot.data!.docs[index];
-                      return Card(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: CircleAvatar(
-                                radius: 30,
-                                backgroundImage: FileImage(
-                                  File(donorsnap['image']),
+                      return InkWell(
+                        onTap: (){
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=> StudentDetails(stdetails: donorsnap)));
+                        },
+                        child: Card(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: CircleAvatar(
+                                  radius: 30,
+                                  backgroundImage: FileImage(
+                                    File(donorsnap['image']),
+                                  ),
                                 ),
                               ),
-                            ),
-                            Text(donorsnap['name']),
-                            Text(donorsnap['class']),
-                          ],
+                              Text(donorsnap['name']),
+                              Text(donorsnap['class']),
+                            ],
+                          ),
                         ),
                       );
                     });

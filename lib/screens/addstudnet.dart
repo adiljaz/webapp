@@ -5,9 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-// Removed unused imports
-
-// Initialized Firebase storage
 firebase_storage.FirebaseStorage storage =
     firebase_storage.FirebaseStorage.instance;
 
@@ -22,49 +19,57 @@ class _AddStudentState extends State<AddStudent> {
   final CollectionReference user =
       FirebaseFirestore.instance.collection('user');
 
-
   File? imageFile;
+  String? imagePath; // Added imagePath variable to store image path
 
-  // Removed unnecessary variables
-
-    final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  final ImagePicker _picker = ImagePicker();
 
   final _nameController = TextEditingController();
   final _classController = TextEditingController();
   final _guardianController = TextEditingController();
   final _mobileController = TextEditingController();
 
-  // Function to pick image from gallery
-  Future imgFromGallery() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+  Future<void> imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
     setState(() {
       if (pickedFile != null) {
         imageFile = File(pickedFile.path);
-        // Removed unnecessary uploadFile call
+        imagePath = pickedFile.path; // Update imagePath with picked file path
+        uploadFile();
       } else {
         print('No image selected.');
       }
     });
   }
 
-  // Function to pick image from camera
-  Future imgFromCamera() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera);
+  Future<void> imgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
 
     setState(() {
       if (pickedFile != null) {
         imageFile = File(pickedFile.path);
-        // Removed unnecessary uploadFile call
+        imagePath = pickedFile.path; // Update imagePath with picked file path
+        uploadFile();
       } else {
         print('No image selected.');
       }
     });
   }
 
-  // Removed unnecessary uploadFile function
+  Future<void> uploadFile() async {
+    if (imageFile == null) return;
+    final fileName = imageFile!.path.split('/').last;
+    final destination = 'files/$fileName';
+
+    try {
+      final ref = firebase_storage.FirebaseStorage.instance.ref(destination);
+      await ref.putFile(imageFile!);
+    } catch (e) {
+      print('error occurred: $e'); // Corrected print statement
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +99,6 @@ class _AddStudentState extends State<AddStudent> {
                 Stack(
                   children: [
                     CircleAvatar(
-                      // Updated to show image from imageFile or default image
                       backgroundImage: imageFile != null
                           ? FileImage(imageFile!)
                           : AssetImage('images/sd1.png') as ImageProvider,
@@ -115,7 +119,79 @@ class _AddStudentState extends State<AddStudent> {
                   ],
                 ),
                 const SizedBox(height: 50),
-                // TextFormField widgets remain unchanged
+                TextFormField(
+                  keyboardType: TextInputType.name,
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: "Name",
+                    hintText: 'Enter name',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a Name';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  keyboardType: TextInputType.text,
+                  controller: _classController,
+                  decoration: InputDecoration(
+                    labelText: "Class",
+                    hintText: 'Enter class',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a Class';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  keyboardType: TextInputType.name,
+                  controller: _guardianController,
+                  decoration: InputDecoration(
+                    labelText: "Guardian",
+                    hintText: 'Enter Guardian name',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a Guardian';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: _mobileController,
+                  decoration: InputDecoration(
+                    labelText: "Mobile",
+                    hintText: 'Mobile Number',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a Mobile';
+                    } else if (value.length != 10) {
+                      return 'Mobile number should be 10 digits';
+                    }
+                    return null;
+                  },
+                ),
               ],
             ),
           ),
@@ -124,18 +200,27 @@ class _AddStudentState extends State<AddStudent> {
     );
   }
 
-  // Removed getImage function as it's redundant
+  Future<void> getImage(ImageSource source) async {
+    final image = await ImagePicker().pickImage(source: source);
+    if (image == null) {
+      return;
+    }
+    setState(() {
+      imageFile = File(image.path);
+      imagePath = image.path;
+    });
+  }
 
   void addPhoto(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog( 
+        return AlertDialog(
           content: const Text('Profile'),
           actions: [
             IconButton(
               onPressed: () {
-                imgFromCamera(); // Changed to call imgFromCamera
+                imgFromCamera(); // Use imgFromCamera to set image
                 Navigator.of(context).pop();
               },
               icon: const Icon(
@@ -145,7 +230,7 @@ class _AddStudentState extends State<AddStudent> {
             ),
             IconButton(
               onPressed: () {
-                imgFromGallery(); // Changed to call imgFromGallery
+                imgFromGallery(); // Use imgFromGallery to set image
                 Navigator.of(context).pop();
               },
               icon: const Icon(
@@ -166,7 +251,7 @@ class _AddStudentState extends State<AddStudent> {
         'class': _classController.text.trim(),
         'guardian': _guardianController.text.trim(),
         'number': _mobileController.text.trim(),
-        'image': imageFile!.path, // Changed to use path directly
+        'image': imagePath,
       };
       user.add(data);
 
@@ -182,6 +267,7 @@ class _AddStudentState extends State<AddStudent> {
 
       setState(() {
         imageFile = null;
+        imagePath = null; // Reset imagePath after adding data
         _nameController.clear();
         _classController.clear();
         _guardianController.clear();
