@@ -1,5 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:h1/function/functions.dart';
+
 import 'package:h1/screens/addstudnet.dart';
 import 'package:h1/screens/grid.dart';
 import 'package:h1/screens/search.dart';
@@ -20,9 +21,11 @@ class _HomeScreeenState extends State<HomeScreeen> {
     const StudentList(),
   ];
 
+  final  CollectionReference  user =FirebaseFirestore.instance.collection('user');
+
   @override
   Widget build(BuildContext context) {
-    getstudentdata();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,

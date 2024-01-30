@@ -1,10 +1,21 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:h1/function/functions.dart';
+
 import 'package:h1/screens/splash.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDatabase();
+
+
+    if(kIsWeb){
+      await Firebase.initializeApp(options: FirebaseOptions(apiKey:"AIzaSyBndG0zLqzgCXGV2b7fu8EmyQhBa38HeBI", appId: "1:1024565924534:web:620648ec15083d0279cc17", messagingSenderId:  "1024565924534", projectId:"student-record-95722"));
+    }
+
+
+  await Firebase.initializeApp();
+
+  
   runApp(const MyApp());
 }
 

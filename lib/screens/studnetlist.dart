@@ -1,8 +1,7 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:h1/function/functions.dart';
-import 'package:h1/function/model.dart';
 import 'package:h1/screens/edit.dart';
 import 'package:h1/screens/studentdetails.dart';
 
@@ -11,26 +10,38 @@ class StudentList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: studentList,
-      builder: (context, value, child) {
-        return ListView.builder(
-          itemCount: value.length,
-          itemBuilder: (context, index) {
-            final student = value[index];
+    final CollectionReference user =
+        FirebaseFirestore.instance.collection('user');
 
+    return StreamBuilder(
+      stream: user.snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(), // Placeholder for loading state
+          );
+        }
+        if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        }
+        return ListView.builder(
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            final DocumentSnapshot student = snapshot.data!.docs[index];
             return Card(
               color: Colors.lightBlue[50],
               margin: const EdgeInsets.all(10),
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundImage: FileImage(
-                    File(student.imagex),
+                    File(student['image']),
                   ),
                 ),
-                title: Text(student.name),
+                title: Text(student['name']),
                 subtitle: Text(
-                  "Class: ${student.classname}",
+                  "Class: ${student['class']}",
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -42,7 +53,14 @@ class StudentList extends StatelessWidget {
                       ),
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => EditStudent(student: student),
+                          builder: (context) => EditStudent(
+                            classname: student['class'],
+                            guardian: student['guardian'],
+                            name: student['name'],
+                           number: student['number'],
+                            photo: student['image'],
+                            documentId: student.id,
+                          ),
                         ));
                       },
                     ),
@@ -52,7 +70,7 @@ class StudentList extends StatelessWidget {
                         color: Colors.red,
                       ),
                       onPressed: () {
-                        deletestudent(context, student);
+                        deleteStudent(student.id, context);
                       },
                     ),
                   ],
@@ -70,43 +88,29 @@ class StudentList extends StatelessWidget {
     );
   }
 
-  void deletestudent(ctx, StudentModel student) {
-    showDialog(
-      context: ctx,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Delete'),
-          content: const Text('Do You Want delete the list ?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                detectedYes(context, student);
-              },
-              child: const Text('Yes'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-              },
-              child: const Text('No'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void detectedYes(ctx, StudentModel student) {
-    deleteStudent(student.id!);
-    ScaffoldMessenger.of(ctx).showSnackBar(
-      const SnackBar(
-        content: Text("Successfully Deleted"),
-        behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.all(10),
-        backgroundColor: Colors.redAccent,
-        duration: Duration(seconds: 2),
-      ),
-    );
-    Navigator.of(ctx).pop();
+  void deleteStudent(String studentId, BuildContext context) {
+    FirebaseFirestore.instance.collection('user').doc(studentId).delete().then((value) {
+      // Show confirmation message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Successfully Deleted"),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(10),
+          backgroundColor: Colors.redAccent,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }).catchError((error) {
+      // Show error message if deletion fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Failed to delete student"),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(10),
+          backgroundColor: Colors.redAccent,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    });
   }
 }
