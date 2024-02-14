@@ -179,3 +179,4 @@ class _SearchScreenState extends State<SearchScreen> {
     Navigator.of(ctx).pop();
   }
 }
+

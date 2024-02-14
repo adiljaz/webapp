@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -75,12 +74,14 @@ class _EditStudentState extends State<EditStudent> {
                   children: [
                     InkWell(
                       onTap: () => editPhoto(context),
-                      child: CircleAvatar(
-                        backgroundImage: updatedImagepath.isNotEmpty
-                            ? FileImage(File(updatedImagepath))
-                            : const AssetImage('assets/default_image.png') as ImageProvider,
-                        radius: 80,
-                      ),
+                      child:Container(
+                                   height: 100,
+                                    width: 100 ,
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(50)),
+                                 
+                                 child: Image.network(updatedImagepath, fit: BoxFit.cover),
+
+                                ),
                     ),
                   ],
                 ),
@@ -214,6 +215,8 @@ class _EditStudentState extends State<EditStudent> {
         'number': number,
         'image': updatedImagepath,
       };
+
+  
 
       user.doc(widget.documentId).update(data);
 

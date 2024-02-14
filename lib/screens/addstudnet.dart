@@ -1,12 +1,11 @@
-import 'dart:io';
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-firebase_storage.FirebaseStorage storage =
-    firebase_storage.FirebaseStorage.instance;
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class AddStudent extends StatefulWidget {
   const AddStudent({Key? key}) : super(key: key);
@@ -19,55 +18,93 @@ class _AddStudentState extends State<AddStudent> {
   final CollectionReference user =
       FirebaseFirestore.instance.collection('user');
 
-  File? imageFile;
-  String? imagePath; // Added imagePath variable to store image path
-
+  String? imagePath;
+  Uint8List? selectedImageInBytes;
   final _formKey = GlobalKey<FormState>();
-  final ImagePicker _picker = ImagePicker();
 
   final _nameController = TextEditingController();
   final _classController = TextEditingController();
   final _guardianController = TextEditingController();
   final _mobileController = TextEditingController();
 
-  Future<void> imgFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  bool _uploading = false;
 
-    setState(() {
-      if (pickedFile != null) {
-        imageFile = File(pickedFile.path);
-        imagePath = pickedFile.path; // Update imagePath with picked file path
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Future<void> imgFromCamera() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      if (pickedFile != null) {
-        imageFile = File(pickedFile.path);
-        imagePath = pickedFile.path; // Update imagePath with picked file path
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Future<void> uploadFile() async {
-    if (imageFile == null) return;
-    final fileName = imageFile!.path.split('/').last;
-    final destination = 'files/$fileName';
-
+  Future<String?> uploadImage(Uint8List imageData, String fileName) async {
     try {
-      final ref = firebase_storage.FirebaseStorage.instance.ref(destination);
-      await ref.putFile(imageFile!);
+      firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+          .ref('new')
+          .child(fileName);
+      final metadata =
+          firebase_storage.SettableMetadata(contentType: 'image/jpeg');
+      await ref.putData(imageData, metadata);
+
+      String downloadURL = await ref.getDownloadURL();
+      return downloadURL;
     } catch (e) {
-      print('error occurred: $e'); // Corrected print statement
+      return null;
+    }
+  }
+
+  Future<void> selectImage() async {
+    var picked = await FilePicker.platform.pickFiles();
+
+    if (picked != null) {
+      setState(() {
+        imagePath = picked.files.first.name;
+        selectedImageInBytes = picked.files.first.bytes;
+      });
+    }
+  }
+
+  Future<void> addDonor(BuildContext ctx) async {
+    if (_formKey.currentState!.validate() && imagePath != null) {
+      setState(() {
+        _uploading = true; 
+      });
+
+      String? url = await uploadImage(selectedImageInBytes!, imagePath!);
+
+      setState(() {
+        _uploading = false;
+      });
+
+      final data = {
+        'name': _nameController.text.trim(),
+        'class': _classController.text.trim(),
+        'guardian': _guardianController.text.trim(),
+        'number': _mobileController.text.trim(),
+        'image': url,
+      };
+      user.add(data);
+
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        const SnackBar(
+          content: Text("Successfully added"),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(10),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      setState(() {
+        imagePath = null;
+        selectedImageInBytes = null;
+        _nameController.clear();
+        _classController.clear();
+        _guardianController.clear();
+        _mobileController.clear();
+      });
+    } else {
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        const SnackBar(
+          content: Text('Add Profile Picture '),
+          duration: Duration(seconds: 2),
+          margin: EdgeInsets.all(10),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -98,18 +135,31 @@ class _AddStudentState extends State<AddStudent> {
               children: [
                 Stack(
                   children: [
-                    CircleAvatar(
-                      backgroundImage: imageFile != null
-                          ? FileImage(imageFile!)
-                          : AssetImage('images/sd1.png') as ImageProvider,
-                      radius: 99,
+                    Container(
+                      width: 160,
+                      height: 160,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.cyan,
+                      ),
+                      child: _uploading
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : (selectedImageInBytes == null
+                              ? Image.network(
+                                  'https://st4.depositphotos.com/11574170/25191/v/450/depositphotos_251916955-stock-illustration-user-glyph-color-icon.jpg',
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.memory(selectedImageInBytes!,
+                                  fit: BoxFit.cover)),
                     ),
                     Positioned(
                       bottom: 20,
                       right: 5,
                       child: IconButton(
                         onPressed: () {
-                          addPhoto(context);
+                          selectImage();
                         },
                         icon: const Icon(Icons.camera_alt),
                         color: Colors.white,
@@ -200,89 +250,5 @@ class _AddStudentState extends State<AddStudent> {
     );
   }
 
-  Future<void> getImage(ImageSource source) async {
-    final image = await ImagePicker().pickImage(source: source);
-    if (image == null) {
-      return;
-    }
-    setState(() {
-      imageFile = File(image.path);
-      imagePath = image.path;
-    });
-  }
 
-  void addPhoto(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: const Text('Profile'),
-          actions: [
-            IconButton(
-              onPressed: () {
-                imgFromCamera(); // Use imgFromCamera to set image
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(
-                Icons.camera_alt_rounded,
-                color: Colors.red,
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                imgFromGallery(); // Use imgFromGallery to set image
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(
-                Icons.image,
-                color: Colors.red,
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void addDonor(BuildContext ctx) {
-    if (_formKey.currentState!.validate() && imageFile != null) {
-      final data = {
-        'name': _nameController.text.trim(),
-        'class': _classController.text.trim(),
-        'guardian': _guardianController.text.trim(),
-        'number': _mobileController.text.trim(),
-        'image': imagePath,
-      };
-      user.add(data);
-
-      ScaffoldMessenger.of(ctx).showSnackBar(
-        const SnackBar(
-          content: Text("Successfully added"),
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.all(10),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
-      );
-
-      setState(() {
-        imageFile = null;
-        imagePath = null; // Reset imagePath after adding data
-        _nameController.clear();
-        _classController.clear();
-        _guardianController.clear();
-        _mobileController.clear();
-      });
-    } else {
-      ScaffoldMessenger.of(ctx).showSnackBar(
-        const SnackBar(
-          content: Text('Add Profile Picture '),
-          duration: Duration(seconds: 2),
-          margin: EdgeInsets.all(10),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
 }

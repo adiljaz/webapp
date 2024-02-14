@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:h1/screens/edit.dart';
@@ -34,11 +32,13 @@ class StudentList extends StatelessWidget {
               color: Colors.lightBlue[50],
               margin: const EdgeInsets.all(10),
               child: ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: FileImage(
-                    File(student['image']),
-                  ),
-                ),
+                leading: Container(
+                                   height: 100,
+                                    width: 100 ,
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(50)),
+                                 
+                                 child: Image.network(student['image'],fit: BoxFit.cover,)
+                                ),
                 title: Text(student['name']),
                 subtitle: Text(
                   "Class: ${student['class']}",

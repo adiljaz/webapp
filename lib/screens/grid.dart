@@ -1,4 +1,4 @@
-import 'dart:io';
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -34,11 +34,12 @@ class Gridlist extends StatelessWidget {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
-                                child: CircleAvatar(
-                                  radius: 30,
-                                  backgroundImage: FileImage(
-                                    File(donorsnap['image']),
-                                  ),
+                                child: Container(
+                                   height: 100,
+                                    width: 100 ,
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(50)),
+                                 
+                                 child: Image.network(donorsnap['image'],fit: BoxFit.cover,)
                                 ),
                               ),
                               Text(donorsnap['name']),
