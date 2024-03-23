@@ -8,7 +8,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (kIsWeb) {
-    await Firebase.initializeApp(
+    await Firebase.initializeApp( 
         options: const FirebaseOptions(
             apiKey: "AIzaSyBndG0zLqzgCXGV2b7fu8EmyQhBa38HeBI",
             appId: "1:1024565924534:web:620648ec15083d0279cc17",
